@@ -237,6 +237,15 @@ export class EsLintRunner {
         );
         return emptyResult;
       }
+      let finalContents =
+        typeof contents === "string"
+          ? contents
+          : contents.getSourceFile(filePath)?.getFullText();
+
+      if (!finalContents) {
+        this.traceMethod("doRun", `No linting: empty file`);
+        return emptyResult;
+      }
 
       let result: eslint.CLIEngine.LintReport;
       const options: eslint.Linter.FixOptions = {
@@ -259,7 +268,7 @@ export class EsLintRunner {
         // clean up if eslint crashes
         const linter = new library.CLIEngine(options);
         this.traceMethod("doRun", `Linting: start linting ${filePath}`);
-        result = linter.executeOnFiles([filePath]);
+        result = linter.executeOnText(finalContents);
         this.traceMethod("doRun", `Linting: ended linting`);
       } finally {
         console.warn = originalConsoleWarn;
