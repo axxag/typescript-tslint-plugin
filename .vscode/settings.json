@@ -1,4 +1,4 @@
 {
-    "typescript.preferences.quoteStyle": "single",
-    "tslint.configFile": "tslint.main.json"
+  "typescript.preferences.quoteStyle": "single",
+  "eslint.configFile": "eslint.main.json"
 }

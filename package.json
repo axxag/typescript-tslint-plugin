@@ -1,19 +1,18 @@
 {
-  "name": "typescript-tslint-plugin",
+  "name": "typescript-eslint-plugin",
   "version": "0.5.5",
-  "description": "TypeScript tslint language service plugin",
+  "description": "TypeScript eslint language service plugin",
   "main": "out/index.js",
-  "author": "Microsoft",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/typescript-tslint-plugin.git"
+    "url": "https://github.com/axxag/typescript-eslint-plugin.git"
   },
   "scripts": {
     "prepublish": "npm run compile",
     "compile": "tsc",
     "test": "mocha ./out/**/*.test.js --slow 2000 --timeout 10000",
-    "lint": "tslint -c tslint.main.json 'src/**/*.ts'",
+    "lint": "eslint --max-warnings 0 --ext .js,.jsx,.ts,.tsx ./src",
     "e2e": "mocha ./e2e/tests/**/*.test.js --slow 2000 --timeout 10000"
   },
   "dependencies": {
@@ -23,13 +22,20 @@
   },
   "devDependencies": {
     "@types/chai": "^4.1.6",
+    "@types/eslint": "^6.8.0",
     "@types/minimatch": "^3.0.3",
     "@types/mocha": "^5.2.5",
     "@types/mock-require": "^2.0.0",
     "@types/node": "^12.12.0",
+    "@typescript-eslint/eslint-plugin": "^2.33.0",
+    "@typescript-eslint/eslint-plugin-tslint": "^2.33.0",
+    "@typescript-eslint/parser": "^2.33.0",
     "chai": "^4.2.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jsdoc": "^25.4.1",
+    "eslint-plugin-prefer-arrow": "^1.2.1",
     "mocha": "^6.2.2",
-    "tslint": "^5.19.0",
     "typescript": "^3.7.2"
   }
 }

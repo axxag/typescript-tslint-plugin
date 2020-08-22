@@ -1,18 +1,18 @@
 {
-    "compilerOptions": {
-        "plugins": [
-            {
-                "name": "typescript-tslint-plugin",
-                "alwaysShowRuleFailuresAsWarnings": false,
-                "ignoreDefinitionFiles": true
-                //"configFile": "../tslint.json",
-            }
-        ],
-        "module": "commonjs",
-        "target": "es6",
-        "allowJs": true,
-        "noImplicitAny": false,
-        "sourceMap": false,
-        "noEmit": true
-    }
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "typescript-eslint-plugin",
+        "alwaysShowRuleFailuresAsWarnings": false,
+        "ignoreDefinitionFiles": true
+        //"configFile": "../eslint.json",
+      }
+    ],
+    "module": "commonjs",
+    "target": "es6",
+    "allowJs": true,
+    "noImplicitAny": false,
+    "sourceMap": false,
+    "noEmit": true
+  }
 }

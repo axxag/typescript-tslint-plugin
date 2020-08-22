@@ -1,58 +1,91 @@
-import { normalize } from 'path';
-import * as tslint from 'tslint'; // this is a dev dependency only
+import * as eslint from 'eslint' // this is a dev dependency only
+import { normalize } from 'path'
 
 /**
  * Filter failures for the given document
  */
 export function filterProblemsForFile(
-    filePath: string,
-    failures: tslint.RuleFailure[],
-): tslint.RuleFailure[] {
-    const normalizedPath = normalize(filePath);
-    // we only show diagnostics targetting this open document, some tslint rule return diagnostics for other documents/files
-    const normalizedFiles = new Map<string, string>();
-    return failures.filter(each => {
-        const fileName = each.getFileName();
-        if (!normalizedFiles.has(fileName)) {
-            normalizedFiles.set(fileName, normalize(fileName));
-        }
-        return normalizedFiles.get(fileName) === normalizedPath;
-    });
-}
-
-export function getReplacements(fix: tslint.Fix | undefined): tslint.Replacement[] {
-    if (!fix) {
-        return [];
-    } else if (Array.isArray(fix)) {
-        return fix;
-    } else {
-        return [fix];
-    }
-}
-
-function getReplacement(failure: tslint.RuleFailure, at: number): tslint.Replacement {
-    return getReplacements(failure.getFix())[at];
-}
-
-export function sortFailures(failures: tslint.RuleFailure[]): tslint.RuleFailure[] {
-    // The failures.replacements are sorted by position, we sort on the position of the first replacement
-    return failures.sort((a, b) => {
-        return getReplacement(a, 0).start - getReplacement(b, 0).start;
-    });
-}
-
-export function getNonOverlappingReplacements(failures: tslint.RuleFailure[]): tslint.Replacement[] {
-    function overlaps(a: tslint.Replacement, b: tslint.Replacement): boolean {
-        return a.end >= b.start;
+  filePath: string,
+  failures: eslint.Linter.LintMessage[]
+): eslint.Linter.LintMessage[] {
+  const normalizedPath = normalize(filePath);
+  // we only show diagnostics targetting this open document, some eslint rule return diagnostics for other documents/files
+  const normalizedFiles = new Map<string, string>();
+  return failures.filter((each) => {
+    const fileName = each.source;
+    if (!fileName) {
+      return;
     }
 
-    const sortedFailures = sortFailures(failures);
-    const nonOverlapping: tslint.Replacement[] = [];
-    for (let i = 0; i < sortedFailures.length; i++) {
-        const replacements = getReplacements(sortedFailures[i].getFix());
-        if (i === 0 || !overlaps(nonOverlapping[nonOverlapping.length - 1], replacements[0])) {
-            nonOverlapping.push(...replacements);
-        }
+    if (!normalizedFiles.has(fileName)) {
+      normalizedFiles.set(fileName, normalize(fileName));
     }
-    return nonOverlapping;
+    return normalizedFiles.get(fileName) === normalizedPath;
+  });
+}
+
+/**
+ *
+ */
+export function getReplacements(
+  fix: eslint.Rule.Fix | undefined
+): eslint.Rule.Fix[] {
+  if (!fix) {
+    return [];
+  } else if (Array.isArray(fix)) {
+    return fix;
+  } else {
+    return [fix];
+  }
+}
+
+/**
+ *
+ */
+function getReplacement(
+  failure: eslint.Linter.LintMessage,
+  at: number
+): eslint.Rule.Fix {
+  return getReplacements(failure.fix)[at];
+}
+
+/**
+ *
+ */
+export function sortFailures(
+  failures: eslint.Linter.LintMessage[]
+): eslint.Linter.LintMessage[] {
+  // The failures.replacements are sorted by position, we sort on the position of the first replacement
+  return failures.sort((a, b) => {
+    return getReplacement(a, 0).range[0] - getReplacement(b, 0).range[0];
+  });
+}
+
+/**
+ *
+ */
+export function getNonOverlappingReplacements(
+  failures: eslint.Linter.LintMessage[]
+): eslint.Rule.Fix[] {
+  /**
+   *
+   */
+  function overlaps(a: eslint.Rule.Fix, b: eslint.Rule.Fix): boolean {
+    return a.range[1] >= b.range[0];
+  }
+
+  const sortedFailures = sortFailures(failures);
+  const nonOverlapping: eslint.Rule.Fix[] = [];
+
+  for (let i = 0; i < sortedFailures.length; i++) {
+    const replacements = getReplacements(sortedFailures[i].fix);
+
+    if (
+      i === 0 ||
+      !overlaps(nonOverlapping[nonOverlapping.length - 1], replacements[0])
+    ) {
+      nonOverlapping.push(...replacements);
+    }
+  }
+  return nonOverlapping;
 }

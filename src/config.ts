@@ -1,3 +1,3 @@
-export const pluginId = 'typescript-tslint-plugin';
-export const TSLINT_ERROR_CODE = 1;
-export const TSLINT_ERROR_SOURCE = 'tslint';
+export const pluginId = "typescript-eslint-plugin";
+export const ESLINT_ERROR_CODE = 1;
+export const ESLINT_ERROR_SOURCE = "eslint";
