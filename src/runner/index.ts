@@ -258,7 +258,7 @@ export class EsLintRunner {
       try {
         // clean up if eslint crashes
         const linter = new library.CLIEngine(options);
-        this.traceMethod("doRun", `Linting: start linting`);
+        this.traceMethod("doRun", `Linting: start linting ${filePath}`);
         result = linter.executeOnFiles([filePath]);
         this.traceMethod("doRun", `Linting: ended linting`);
       } finally {

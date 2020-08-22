@@ -6,22 +6,27 @@ import { normalize } from 'path'
  */
 export function filterProblemsForFile(
   filePath: string,
-  failures: eslint.Linter.LintMessage[]
+  report: eslint.CLIEngine.LintReport
 ): eslint.Linter.LintMessage[] {
   const normalizedPath = normalize(filePath);
   // we only show diagnostics targetting this open document, some eslint rule return diagnostics for other documents/files
   const normalizedFiles = new Map<string, string>();
-  return failures.filter((each) => {
-    const fileName = each.source;
+
+  let messages: eslint.Linter.LintMessage[] = [];
+  for (const result of report.results) {
+    const fileName = result.filePath;
     if (!fileName) {
-      return;
+      continue;
     }
 
     if (!normalizedFiles.has(fileName)) {
       normalizedFiles.set(fileName, normalize(fileName));
     }
-    return normalizedFiles.get(fileName) === normalizedPath;
-  });
+    if (normalizedFiles.get(fileName) === normalizedPath) {
+      messages = messages.concat(result.messages);
+    }
+  }
+  return messages;
 }
 
 /**

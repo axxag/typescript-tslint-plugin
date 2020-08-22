@@ -277,10 +277,7 @@ describe("ESLintRunner", () => {
 
       const filteredFailures = filterProblemsForFile(
         "does-not-exist",
-        result.lintResult.results.reduce<eslint.Linter.LintMessage[]>(
-          (r, m) => [...r, ...m.messages],
-          []
-        )
+        result.lintResult
       );
       expect(filteredFailures.length).to.equal(0);
     });

@@ -220,13 +220,7 @@ export class ESLintPlugin {
           }
         }
       }
-      const eslintProblems = filterProblemsForFile(
-        fileName,
-        result.lintResult.results.reduce<eslint.Linter.LintMessage[]>(
-          (r, t) => [...r, ...t.messages],
-          []
-        )
-      );
+      const eslintProblems = filterProblemsForFile(fileName, result.lintResult);
       for (const problem of eslintProblems) {
         diagnostics.push(this.makeDiagnostic(problem, file));
         this.recordCodeAction(problem, file);
@@ -396,7 +390,7 @@ export class ESLintPlugin {
     fileName: string,
     file: ts_module.SourceFile
   ): ts_module.CodeFixAction {
-    const line = failure.line;
+    const line = failure.line - 1;
     const lineStarts = file.getLineStarts();
     const lineStart = lineStarts[line];
     let prefix = "";
@@ -419,7 +413,7 @@ export class ESLintPlugin {
           fileName,
           textChanges: [
             {
-              newText: `${prefix}// eslint:disable-next-line: ${failure.ruleId}\n`,
+              newText: `${prefix}// eslint-disable-next-line ${failure.ruleId}\n`,
               span: { start: lineStart, length: 0 },
             },
           ],
